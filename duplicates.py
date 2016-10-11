@@ -1,5 +1,6 @@
 from os import walk, path
 from collections import defaultdict
+import argparse
 
 
 def get_file_list(folder):
@@ -21,4 +22,11 @@ def are_files_duplicates(file_path1, file_path_2):
 
 
 if __name__ == '__main__':
-    pass
+    parser = argparse.ArgumentParser(
+        description='Ищет дубликаты файлов в указанном каталоге')
+    parser.add_argument('dirpath', help='укажите путь к каталогу')
+    args = parser.parse_args()
+    print('Ищем дубликаты файлов...')
+    lst = get_file_list(args.dirpath)
+    for files in lst:
+        print('Эти файлы одинаковы: {} и {}'.format(files[0], files[1]))
