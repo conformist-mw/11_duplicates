@@ -27,9 +27,12 @@ if __name__ == '__main__':
         description='Ищет дубликаты файлов в указанном каталоге')
     parser.add_argument('dirpath', help='укажите путь к каталогу')
     args = parser.parse_args()
-    print('Ищем дубликаты файлов...')
-    lst = get_file_list(args.dirpath)
-    for files in lst:
-        print('Эти файлы одинаковы: {} и {}'.format(files[0], files[1]))
-        print('Удаляем дубликат: {}'.format(files[1]))
-        remove(files[1])
+    if path.isdir(args.dirpath):
+        print('Ищем дубликаты файлов...')
+        lst = get_file_list(args.dirpath)
+        for files in lst:
+            print('Эти файлы одинаковы: {} и {}'.format(files[0], files[1]))
+            print('Удаляем дубликат: {}'.format(files[1]))
+            remove(files[1])
+    else:
+        print('{} не существует!'.format(args.dirpath))
