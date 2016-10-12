@@ -1,4 +1,4 @@
-from os import walk, path
+from os import walk, path, remove
 from collections import defaultdict
 import argparse
 
@@ -11,8 +11,11 @@ def get_file_list(folder):
     same = []
     for key in f_list:
         if len(f_list[key]) > 1:
-            same.append(are_files_duplicates(path.join(f_list[key][0], key),
-                                             path.join(f_list[key][1], key)))
+            for f_path in f_list[key][1:]:
+                same.append(are_files_duplicates(
+                    path.join(f_list[key][0], key), path.join(f_path, key)))
+            # same.append(are_files_duplicates(path.join(f_list[key][0], key),
+            #                                  path.join(f_list[key][1], key)))
     return same
 
 
@@ -30,3 +33,5 @@ if __name__ == '__main__':
     lst = get_file_list(args.dirpath)
     for files in lst:
         print('Эти файлы одинаковы: {} и {}'.format(files[0], files[1]))
+        print('Удаляем дубликат: {}'.format(files[1]))
+        remove(files[1])
