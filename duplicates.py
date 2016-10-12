@@ -14,8 +14,6 @@ def get_file_list(folder):
             for f_path in f_list[key][1:]:
                 same.append(are_files_duplicates(
                     path.join(f_list[key][0], key), path.join(f_path, key)))
-            # same.append(are_files_duplicates(path.join(f_list[key][0], key),
-            #                                  path.join(f_list[key][1], key)))
     return same
 
 
