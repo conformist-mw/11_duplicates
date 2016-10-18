@@ -1,25 +1,28 @@
-from os import walk, path, remove
+from os import walk, path
 from collections import defaultdict
 import argparse
 
 
 def get_file_list(folder):
-    f_list = defaultdict(list)
+    file_list = defaultdict(list)
     for root, dirs, files in walk(folder):
         for file in files:
-            f_list[file].append(root)
-    same = []
-    for key in f_list:
-        if len(f_list[key]) > 1:
-            for f_path in f_list[key][1:]:
-                same.append(are_files_duplicates(
-                    path.join(f_list[key][0], key), path.join(f_path, key)))
-    return same
+            file_list[file].append(root)
+    return dict((k, v) for k, v in file_list.items() if len(v) > 1)
 
 
-def are_files_duplicates(file_path1, file_path_2):
-    if path.getsize(file_path1) == path.getsize(file_path_2):
-        return [file_path1, file_path_2]
+def convert_to_list(file_list):
+    pair_list = []
+    for file_name, dirs in file_list.items():
+        file1 = path.join(dirs[0], file_name)
+        file2 = path.join(dirs[1], file_name)
+        pair_list.append([file1, file2])
+    return pair_list
+
+
+def compare_files(file1, file2):
+    if path.getsize(file1) == path.getsize(file2):
+        return True
 
 
 if __name__ == '__main__':
@@ -29,10 +32,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if path.isdir(args.dirpath):
         print('Ищем дубликаты файлов...')
-        lst = get_file_list(args.dirpath)
-        for files in lst:
-            print('Эти файлы одинаковы: {} и {}'.format(files[0], files[1]))
-            print('Удаляем дубликат: {}'.format(files[1]))
-            remove(files[1])
-    else:
-        print('{} не существует!'.format(args.dirpath))
+        file_list = get_file_list(args.dirpath)
+        pairs = convert_to_list(file_list)
+        for pair in pairs:
+            if compare_files(pair[0], pair[1]):
+                print('Дубликаты: \n \t{} и {}'.format(pair[0], pair[1]))
